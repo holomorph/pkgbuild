@@ -1,0 +1,26 @@
+pkgname=repose-git
+pkgver=7.1.r6.g59b4434
+pkgrel=1
+pkgdesc='Archlinux repository compiler'
+arch=('i686' 'x86_64')
+url="https://github.com/vodik/repose"
+license=('GPL')
+depends=('pacman')
+makedepends=('git')
+provides=('repose')
+conflicts=('repose')
+source=('git+https://github.com/vodik/repose.git')
+sha256sums=('SKIP')
+
+pkgver() {
+  cd repose
+  git describe | sed 's/^v//;s/-/.r/;s/-/./g'
+}
+
+build() {
+  make -C repose
+}
+
+package() {
+  make -C repose PREFIX=/usr DESTDIR="$pkgdir" install
+}

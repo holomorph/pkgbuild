@@ -1,0 +1,90 @@
+ weather.1   | 6 +++---
+ weather.py  | 6 +++---
+ weatherrc   | 4 ++--
+ weatherrc.5 | 6 +++---
+ 4 files changed, 11 insertions(+), 11 deletions(-)
+
+diff --git a/weather.1 b/weather.1
+index 454273e..fa014e4 100644
+--- a/weather.1
++++ b/weather.1
+@@ -138,8 +138,8 @@ disable search result caching
+ skip preambles and don't indent
+ .TP
+ .BR \-\-setpath =\fISETPATH\fR
+-directory search path for correlation sets (ex:
+-.BR .:~/.weather )
++directory search path for correlation sets (def:
++.BR /usr/share/weather )
+ .TP
+ .BR \-v ", " \-\-verbose
+ show full decoded feeds
+@@ -204,7 +204,7 @@ They are aggregated in the following order:
+ .I /etc/weatherrc " or " /etc/weather/weatherrc
+ the system-wide configuration
+ .TP
+-.IR ~/.weather/weatherrc " or " ~/.weatherrc
++.IR ~/.config/weather/weatherrc " or " ~/.weatherrc
+ the per-user configuration
+ .TP
+ .I ./weatherrc
+diff --git a/weather.py b/weather.py
+index cd22db3..647587b 100644
+--- a/weather.py
++++ b/weather.py
+@@ -431,7 +431,7 @@ def get_options(config):
+     # the --cachedir option
+     if config.has_option("default", "cachedir"):
+         default_cachedir = config.get("default", "cachedir")
+-    else: default_cachedir = "~/.weather"
++    else: default_cachedir = "~/.cache/weather"
+     option_parser.add_option("--cachedir",
+         dest="cachedir",
+         default=default_cachedir,
+@@ -559,7 +559,7 @@ def get_options(config):
+     # the --setpath option
+     if config.has_option("default", "setpath"):
+         default_setpath = config.get("default", "setpath")
+-    else: default_setpath = ".:~/.weather"
++    else: default_setpath = "/usr/share/weather"
+     option_parser.add_option("--setpath",
+         dest="setpath",
+         default=default_setpath,
+@@ -610,7 +610,7 @@ def get_config():
+     rcfiles = [
+         "/etc/weatherrc",
+         "/etc/weather/weatherrc",
+-        os.path.expanduser("~/.weather/weatherrc"),
++        os.path.expanduser("~/.config/weather/weatherrc"),
+         os.path.expanduser("~/.weatherrc"),
+         "weatherrc"
+         ]
+diff --git a/weatherrc b/weatherrc
+index 3d229c7..140d549 100644
+--- a/weatherrc
++++ b/weatherrc
+@@ -6,5 +6,5 @@
+ 
+ [default]
+ description = default settings
+-#cachedir = ~/.weather
+-#setpath = .:~/.weather:/var/lib/weather-util:/usr/share/weather-util
++#cachedir = ~/.cache/weather
++#setpath = /usr/share/weather
+diff --git a/weatherrc.5 b/weatherrc.5
+index ea545d0..dd46841 100644
+--- a/weatherrc.5
++++ b/weatherrc.5
+@@ -87,9 +87,9 @@ directory search path for correlation sets (ex:
+ show full decoded feeds (possible values are
+ .BR False " and " True " or " 0 " and " 1 )
+ .SH EXAMPLES
+-The following is an example \fI~/.weather/weatherrc\fR defining a couple
+-aliases named home and work to be displayed when running the utility
+-with no aliases specified...
++The following is an example \fIweatherrc\fR defining a couple aliases named
++home and work to be displayed when running the utility with no aliases
++specified...
+ .P
+ .in 0
+ .nf

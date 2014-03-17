@@ -1,0 +1,50 @@
+# Contributor: Steven Allen <steven@stebalien.com>
+# Contributor: Army
+# Contributor: Bastien Dejean <baskerville@lavabit.com>
+
+pkgname=sxiv-git
+pkgver=1.1.1+18+g3da53fc
+pkgrel=1
+pkgdesc='Simple X Image Viewer'
+url="https://github.com/Cloudef/sxiv/tree/manga"
+license=('GPL2')
+arch=('i686' 'x86_64')
+depends=('imlib2' 'desktop-file-utils' 'libarchive')
+makedepends=('git')
+optdepends=('imagemagick: for the example commands in config.def.h'
+            'libjpeg-turbo: for the example commands in config.def.h'
+            'gimp: for the example commands in config.def.h'
+            'unrar: open images in rar archives')
+provides=('sxiv')
+conflicts=('sxiv')
+source=('git+https://github.com/Cloudef/sxiv.git#branch=manga'
+        'config_def_h.diff')
+sha256sums=('SKIP'
+            'e31ad45d26a1b0e3365dc66e92903da8d197170d236cea2bb2958df7ffa70a17')
+
+pkgver() {
+  cd sxiv
+  git describe | sed 's/^v//;s/-/+/g'
+}
+
+prepare() {
+  cd sxiv
+
+  # Allow custom FLAGS
+  sed -i Makefile -e 's|^CFLAGS\s*=|CFLAGS +=|' -e 's|^LDFLAGS\s*=|LDFLAGS +=|'
+
+  # custom config
+  patch -p1 < ../config_def_h.diff
+}
+
+build() {
+  cd sxiv
+  export CFLAGS="$CFLAGS $CPPFLAGS"
+  make PREFIX=/usr
+}
+
+package() {
+  cd sxiv
+  make PREFIX=/usr DESTDIR="$pkgdir" install
+  install -Dm644 sxiv.desktop "$pkgdir/usr/share/applications/sxiv.desktop"
+}

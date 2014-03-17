@@ -1,0 +1,66 @@
+# $Id$
+
+pkgname=dwm-git
+pkgver=6.1+2+g3465bed
+pkgrel=1
+pkgdesc='A dynamic window manager for X'
+url="http://dwm.suckless.org"
+arch=('i686' 'x86_64')
+license=('MIT')
+depends=('libx11' 'libxft' 'libxinerama' 'pango')
+makedepends=('git')
+provides=('dwm')
+conflicts=('dwm')
+source=('dwm::git+http://git.suckless.org/dwm#commit=3465bed'
+        'dwm.desktop'
+        '10-pango.diff'
+        '20-noborder.diff'
+        '30-centerfloat.diff'
+        '40-attachaside.diff'
+        '50-savefloats.diff'
+        '90-theme.diff'
+        '91-rules.diff'
+        '92-keys.diff')
+sha256sums=('SKIP'
+            'bc36426772e1471d6dd8c8aed91f288e16949e3463a9933fee6390ee0ccd3f81'
+            'f65b7b320fd93db447904ef382baac26aed87363a74401fb25599bcf80639b5b'
+            '07d17181b17aa97fcb757e8d9762b27b3dabee80c3b7fb7e3e37a775f406f698'
+            'bb9df8adef964b6dbe121c6b0854733b2aff193f218487e74f5ee0fa9789df9f'
+            '725bbfe7e8a3c0a3eda2a984f61a2cc45962d0b9a84a4e53653d0f0aa108f0a6'
+            '1056e98392668f22cf0032561c8942fb8d53494c311ffd9561dd9416b4102cf7'
+            '8700d2a97b4a0ead4e2d1506aeeff7c636d99b6b21b57ef4a49dac85e3816dba'
+            '18e84d6182d1e6b54c08c2f2f272cf5701d08227e323450a3bd3cc01913df6ca'
+            'c9c23c3730a7bd7f4020543128a96e048638bc801d7e1eb10ce6c73fd8235c0b')
+
+pkgver(){
+  cd dwm
+  git describe --tags | sed 's/-/+/g'
+}
+
+prepare() {
+  cd dwm
+
+  patch -p1 < ../10-pango.diff
+  patch -p1 < ../20-noborder.diff
+  patch -p1 < ../30-centerfloat.diff
+  patch -p1 < ../40-attachaside.diff
+  patch -p1 < ../50-savefloats.diff
+
+  # config
+  patch -p1 < ../90-theme.diff
+  patch -p1 < ../91-rules.diff
+  patch -p1 < ../92-keys.diff
+}
+
+build() {
+  cd dwm
+  make X11INC=/usr/include/X11 X11LIB=/usr/lib/X11
+}
+
+package() {
+  cd dwm
+
+  make PREFIX=/usr DESTDIR="$pkgdir" install
+  install -Dm644 LICENSE "$pkgdir/usr/share/licenses/dwm/LICENSE"
+  install -Dm644 "$srcdir"/dwm.desktop "$pkgdir/usr/share/xsessions/dwm.desktop"
+}

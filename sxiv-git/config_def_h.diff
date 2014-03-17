@@ -1,0 +1,30 @@
+--- a/config.def.h	2014-06-18 20:16:40.200624816 -0400
++++ b/config.def.h	2014-05-02 17:56:57.305257038 -0400
+@@ -9,15 +9,15 @@
+ /* bar font:
+  * (see X(7) section "FONT NAMES" for valid values)
+  */
+-static const char * const BAR_FONT = "-*-fixed-medium-r-*-*-13-*-*-*-*-60-*-*";
++static const char * const BAR_FONT = "-*-terminus-medium-r-*-*-12-*-*-*-*-60-*-*";
+ 
+ /* colors:
+  * (see X(7) section "COLOR NAMES" for valid values)
+  */
+-static const char * const WIN_BG_COLOR = "#777777";
++static const char * const WIN_BG_COLOR = "#1E1E1E";
+ static const char * const WIN_FS_COLOR = "#000000";
+ static const char * const SEL_COLOR    = "#DDDDDD";
+-static const char * const BAR_BG_COLOR = "#222222";
++static const char * const BAR_BG_COLOR = "#000000";
+ static const char * const BAR_FG_COLOR = "#EEEEEE";
+ 
+ #endif
+@@ -50,7 +50,7 @@ enum {
+ #ifdef _THUMBS_CONFIG
+ 
+ /* default dimension of thumbnails (width == height): */
+-enum { THUMB_SIZE = 60 };
++enum { THUMB_SIZE = 256 };
+ 
+ #endif
+ #ifdef _RENDER_CONFIG

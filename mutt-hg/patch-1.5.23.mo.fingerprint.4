@@ -1,0 +1,16 @@
+diff -r 1e935cab6f17 PATCHES
+--- a/PATCHES	Wed Oct 23 11:20:24 2013 -0700
++++ b/PATCHES	Wed Oct 23 17:45:06 2013 -0400
+@@ -0,0 +1,1 @@
++patch-1.5.23.mo.fingerprint.4
+diff --git a/crypt-gpgme.c b/crypt-gpgme.c
+--- a/crypt-gpgme.c
++++ b/crypt-gpgme.c
+@@ -1388,6 +1388,7 @@
+ 	if (show_sig_summary (sum, ctx, key, idx, s, sig))
+ 	  anywarn = 1;
+ 	show_one_sig_validity (ctx, idx, s);
++	show_fingerprint (key,s);
+       }
+       else if ((sum & GPGME_SIGSUM_RED))
+       {

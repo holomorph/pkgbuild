@@ -1,0 +1,73 @@
+# $Id: PKGBUILD 192474 2013-08-12 20:25:41Z eric $
+# Contributor: Juergen Hoetzel <juergen@archlinux.org>
+# Contributor: Renchi Raju <renchi@green.tam.uiuc.edu>
+
+pkgname=emacs-git
+pkgver=25.1.r128487.gc5f319eb3a
+pkgrel=1
+pkgdesc='The extensible, customizable, self-documenting real-time display editor'
+arch=('i686' 'x86_64')
+url="http://www.gnu.org/software/emacs/emacs.html"
+license=('GPL3')
+depends=('librsvg' 'gpm' 'giflib' 'libxml2' 'libxpm' 'libotf' 'm17n-lib'
+         'hicolor-icon-theme' 'desktop-file-utils' 'alsa-lib' 'imagemagick'
+         'gnutls')
+makedepends=('git')
+conflicts=('emacs')
+provides=('emacs')
+# options=('debug' '!strip')
+install=emacs.install
+source=('git://git.savannah.gnu.org/emacs.git')
+sha256sums=('SKIP')
+
+pkgver() {
+  cd emacs
+  git describe --tags | sed 's/^emacs-//;s/-/.r/;s/-/./g'
+}
+
+prepare() {
+  cd emacs
+  ed -s lisp/emacs-lisp/package.el <<< $',s/(package--ensure-init-file)//\nw'
+}
+
+build() {
+  cd emacs
+
+  ./autogen.sh
+
+  ac_cv_lib_gif_EGifPutExtensionLast=yes ./configure \
+    --prefix=/usr \
+    --sysconfdir=/etc \
+    --libexecdir=/usr/lib \
+    --localstatedir=/var \
+    --without-gconf \
+    --with-modules \
+    --with-x-toolkit=lucid
+
+  make
+}
+
+# check() {
+#   cd emacs
+#   make check
+# }
+
+package() {
+  cd emacs
+
+  make DESTDIR="$pkgdir" install
+  install -Dm644 src/emacs-module.h "$pkgdir"/usr/include/emacs-module.h
+
+  # remove conflict with ctags package
+  mv "$pkgdir"/usr/bin/{ctags,ctags.emacs}
+  mv "$pkgdir"/usr/share/man/man1/{ctags.1.gz,ctags.emacs.1}
+
+  # fix user/root permissions on usr/share files
+  find "$pkgdir"/usr/share/emacs/26.0.50 -exec chown root:root {} \;
+
+  # fix perms on /var/games
+  # chmod 775 "$pkgdir"/var/games
+  # chmod 775 "$pkgdir"/var/games/emacs
+  # chmod 664 "$pkgdir"/var/games/emacs/*
+  # chown -R root:games "$pkgdir"/var/games
+}

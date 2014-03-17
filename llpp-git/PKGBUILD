@@ -1,0 +1,46 @@
+# Contributor: Earnestly <zibeon@gmail.com>
+
+pkgname=llpp-git
+pkgver=26b.r9.g1415638
+pkgrel=1
+pkgdesc='Lightweight, OpenGL-accelerated PDF viewer based on MuPDF.'
+arch=('i686' 'x86_64')
+url="http://repo.or.cz/w/llpp.git"
+license=('custom')
+provides=('llpp')
+conflicts=('llpp')
+depends=('desktop-file-utils' 'freetype2' 'glu' 'jbig2dec' 'openjpeg2'
+         'libgl' 'libjpeg-turbo' 'libx11')
+makedepends=('ed' 'git' 'ocaml>=4.02' 'libmupdf>=1.7' 'ocaml-lablgl')
+optdepends=('gawk: history garbage collection')
+source=('git://repo.or.cz/llpp.git'
+        'Makefile'
+        'no-esc-quit.patch')
+sha256sums=('SKIP'
+            '0e384bfaadc935a64536a86542bbc09a0db3b26e41b05288109a80e890d87112'
+            'de342883a7918ea2ea778010ff1c12549614e1c63e71d8afe1032507e0396a05')
+
+pkgver() {
+  cd llpp
+  git describe --tags | sed 's/^v//;s/-/.r/;s/-/./g'
+}
+
+prepare() {
+  cd llpp
+  # config
+  ed -v link.c <<< $',s/0xc3, 0xb0, 0x91/0xff, 0xc5, 0x24/\nw'
+  ed -v config.ml <<< $',s/llpp\.conf/llpp\/llpp.conf/\nw'
+  patch -p1 < ../no-esc-quit.patch
+}
+
+build() {
+  cd llpp
+  make -f ../Makefile
+  make -C misc/completions
+}
+
+package() {
+  cd llpp
+  make -f ../Makefile PREFIX=/usr DESTDIR="$pkgdir" install
+  make -C misc/completions PREFIX=/usr DESTDIR="$pkgdir" install
+}

@@ -1,0 +1,70 @@
+# Contributor: Earnestly
+
+pkgname=vim-git
+pkgver=8.0.0473
+pkgrel=1
+pkgdesc='Vi Improved, a highly configurable, improved version of the vi text editor.'
+arch=('i686' 'x86_64')
+url="http://www.vim.org/"
+license=('custom:vim')
+depends=('gtk3' 'gdk-pixbuf2' 'pango' 'glib2' 'libsm' 'libice' 'libxt' 'libx11'
+         'ncurses' 'acl' 'python')
+makedepends=('mercurial')
+conflicts=('vim' 'gvim' 'vim-runtime')
+provides=('vim' 'gvim' 'vim-runtime')
+source=('git+https://github.com/vim/vim.git'
+        'gvim.desktop'
+        'remove_ro_delay.patch')
+sha256sums=('SKIP'
+            '8a48bd9c4b14a0f1047ce9f668d0f5d8639a1713d150d4267d4793d340baf971'
+            '13405b3bdbcbeee2dd56d9ff5b73f823a97ba951b04be7f02c22c857bd6d214b')
+
+pkgver() {
+    cd vim
+    #hg log -r "." --template "{sub('-', '.', strip(latesttag, 'v'))}.r{latesttagdistance}.{node|short}"
+    git describe --tags | sed 's/^v//;s/-/+/g'
+}
+
+prepare() {
+    cd vim
+    patch -p1 < ../remove_ro_delay.patch
+}
+
+build() {
+    cd vim
+
+    ./configure \
+        --enable-acl \
+        --disable-gpm \
+        --with-x=yes \
+        --prefix=/usr \
+        --enable-cscope \
+        --enable-gui=gtk3 \
+        --disable-luainterp \
+        --enable-multibyte \
+        --disable-netbeans \
+        --disable-perlinterp \
+        --disable-rubyinterp \
+        --with-features=huge \
+        --disable-pythoninterp \
+        --enable-python3interp \
+        --localstatedir=/var/lib/vim
+
+    make
+}
+
+package() {
+    cd vim
+    make DESTDIR="$pkgdir" install
+
+    rm "$pkgdir"/usr/bin/{ex,view}
+
+    shopt -s globstar
+    rm "$pkgdir"/usr/share/man/**/ex.1*
+    rm "$pkgdir"/usr/share/man/**/view.1*
+    shopt -u globstar
+
+    install -Dm644 "$srcdir"/gvim.desktop "$pkgdir"/usr/share/applications/gvim.desktop
+    install -Dm644 runtime/vim48x48.png "$pkgdir"/usr/share/pixmaps/gvim.png
+    install -Dm644 runtime/doc/uganda.txt "$pkgdir"/usr/share/licenses/"$pkgname"/license.txt
+}

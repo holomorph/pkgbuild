@@ -1,0 +1,82 @@
+# Contributor: tobias [tobias [at] archlinux.org]
+# Contributor: Gaetan Bisson <bisson@archlinux.org>
+# Contributor: Loui Chang <louipc dot ist at NOSPAM gmail dot com>
+
+pkgname=mutt-hg
+pkgver=1.8.r52.29239b1a6d50
+pkgrel=1
+pkgdesc='A small but very powerful text-based mail client'
+url="http://www.mutt.org/"
+license=('GPL')
+arch=('i686' 'x86_64')
+depends=('gpgme' 'ncurses' 'openssl' 'libsasl' 'gdbm' 'libidn' 'mime-types' 'krb5')
+makedepends=('mercurial' 'gnupg' 'libxslt')
+conflicts=('mutt')
+provides=('mutt')
+# options=('debug' '!strip')
+source=('hg+http://dev.mutt.org/hg/mutt'
+        'patch-1.5.22.dr.attach.1'
+        'patch-1.5.22.cd.trash_folder.2'
+        'patch-1.5.22.mo.xdg.3'
+        'patch-1.5.23.mo.fingerprint.4'
+        'http://dev.mutt.org/trac/raw-attachment/ticket/3639/smime.patch')
+sha256sums=('SKIP'
+            'edab7fec21836fc166b19c519208808f6e116525004c7e2a0521e0be94eaccb9'
+            'ef619386db6de591317719962a0cb064ae5dba894913b1e81153fe9728e01764'
+            '2396b684cfdfd2a26cb726b3ae12619de7c49c5d3c3920832f0411443556f649'
+            'e80571ac06561c40eef01cdf54e561d44b6923e169c9ca14b80c537e7e15f5a1'
+            '2a94442fc7fd86c624cfd6c16889ec75766030564c23cde77cc1feb08007d0be')
+
+pkgver() {
+  cd mutt
+
+  local log=$(sed '2q' <(hg tags))
+  local tag=$(awk 'NR==2 {print $1}' <<< "$log" | sed 's/^mutt-//;s/-rel$//;s/-/./g')
+  local rev=$(awk -F"[ :]+" 'NR<3 {r[NR-1]=$2} END {print r[0]-r[1]}' <<< "$log")
+  local sha=$(sed '1q' <<< "$log")
+
+  echo "$tag.r$rev.${sha##*:}"
+}
+
+prepare() {
+  cd mutt
+
+  patch -p1 < ../patch-1.5.22.dr.attach.1
+  # patch -p1 < ../patch-1.5.22.cd.trash_folder.2
+  # patch -p1 < ../patch-1.5.22.mo.xdg.3 
+  patch -p1 < ../patch-1.5.23.mo.fingerprint.4
+}
+
+build() {
+  cd mutt
+
+  ./prepare \
+    --prefix=/usr \
+    --sysconfdir=/etc \
+    --enable-debug \
+    --enable-gpgme \
+    --enable-hcache \
+    --enable-imap \
+    --enable-pgp \
+    --enable-pop \
+    --enable-smtp \
+    --enable-sidebar \
+    --with-curses \
+    --with-gss \
+    --with-idn \
+    --with-regex \
+    --with-sasl \
+    --with-ssl
+
+  make V=0
+}
+
+package() {
+  cd mutt
+
+  make DESTDIR="$pkgdir" install
+  rm "$pkgdir"/etc/mime.types{,.dist}
+  rm "$pkgdir"/usr/bin/{flea,muttbug}
+  rm "$pkgdir"/usr/share/man/man1/{flea,muttbug}.1
+  install -Dm644 contrib/gpg.rc "$pkgdir/etc/Muttrc.gpg.dist"
+}

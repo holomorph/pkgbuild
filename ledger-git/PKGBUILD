@@ -1,0 +1,46 @@
+# Contributor: Johann Klähn <kljohann@gmail.com>
+# Contributor: Nathan Jones <nathanj@insightbb.com>
+
+pkgname=ledger-git
+pkgdesc='A double-entry accounting system'
+pkgver=3.1+186+g977e33d
+pkgrel=1
+url="http://ledger-cli.org"
+license=('BSD')
+arch=('i686' 'x86_64')
+depends=('boost-libs' 'gmp' 'mpfr' 'libedit')
+makedepends=('boost' 'cmake' 'git' 'emacs' 'python' 'texinfo')
+provides=('ledger')
+conflicts=('ledger')
+install=ledger.install
+source=('git://github.com/ledger/ledger.git'
+        'git://github.com/ledger/utfcpp.git')
+sha256sums=('SKIP' 'SKIP')
+
+pkgver() {
+  cd ledger
+  git describe --tags | sed 's/^v//;s/-/+/g'
+}
+
+prepare() {
+  cd ledger
+  git submodule init
+  git config submodule.lib/utfcpp.url "$srcdir/utfcpp"
+  git submodule update
+}
+
+build() {
+  cd ledger
+  ./acprep configure --prefix=/usr -- \
+    -DCMAKE_INSTALL_LIBDIR=lib \
+    -DBUILD_DOCS=ON \
+    -DBUILD_EMACSLISP=ON
+  make
+  make doc
+}
+
+package () {
+  cd ledger
+  make DESTDIR="$pkgdir" install
+  install -Dm644 doc/LICENSE "$pkgdir"/usr/share/licenses/ledger/LICENSE
+}

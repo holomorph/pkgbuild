@@ -1,0 +1,28 @@
+# Maintainer:
+
+pkgname=imv-git
+pkgver=2.1.3+14+gcee3673
+pkgrel=1
+pkgdesc='Simple image viewer for X11/Wayland'
+arch=('i686' 'x86_64')
+url="https://github.com/eXeC64/imv"
+license=('GPL')
+depends=('freeimage' 'sdl2' 'sdl2_ttf' 'fontconfig')
+makedepends=('git')
+conflicts=('imv' 'renameutils')
+provides=('imv')
+source=('git+https://github.com/eXeC64/imv')
+sha256sums=('SKIP')
+
+pkgver() {
+  cd imv
+  git describe --tags | sed 's/^v//;s/-/+/g'
+}
+
+build() {
+  make -C imv
+}
+
+package() {
+  make -C imv DESTDIR="$pkgdir" install
+}

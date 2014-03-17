@@ -1,0 +1,45 @@
+pkgname=weechat-git
+pkgver=1.7+61+g184891fd7
+pkgrel=1
+pkgdesc='Fast, light & extensible IRC client (curses UI)'
+arch=('i686' 'x86_64')
+url="http://www.weechat.org/"
+license=('GPL3')
+depends=('curl' 'gnutls' 'libgcrypt' 'ncurses')
+makedepends=('git' 'cmake' 'perl' 'python')
+optdepends=('perl' 'python')
+provides=('weechat')
+conflicts=('weechat')
+source=('git+https://github.com/weechat/weechat')
+sha256sums=('SKIP')
+
+pkgver() {
+  cd weechat
+  git describe | sed 's/^v//g;s/-/+/g;s/+r/.r/'
+}
+
+build() {
+  cd weechat
+
+  cmake \
+    -DCMAKE_INSTALL_PREFIX=/usr \
+    -DWEECHAT_HOME=~/.config/weechat \
+    -DPYTHON_LIBRARY=/usr/lib/libpython3.6m.so \
+    -DENABLE_PYTHON3=ON \
+    -DENABLE_ASPELL=OFF \
+    -DENABLE_FIFO=OFF \
+    -DENABLE_RELAY=OFF \
+    -DENABLE_GUILE=OFF \
+    -DENABLE_JAVASCRIPT=OFF \
+    -DENABLE_LUA=OFF \
+    -DENABLE_RUBY=OFF \
+    -DENABLE_TCL=OFF \
+    -DENABLE_XFER=OFF
+
+  make
+}
+
+package() {
+  cd weechat
+  make DESTDIR="$pkgdir" install
+}

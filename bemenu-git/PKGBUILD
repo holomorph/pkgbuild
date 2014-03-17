@@ -1,0 +1,38 @@
+# Contributor: Earnestly
+
+pkgname=bemenu-git
+pkgver=r228+g10fcb9c
+pkgrel=1
+pkgdesc='Dynamic menu library and client program inspired by dmenu'
+url='https://github.com/Cloudef/bemenu'
+arch=('i686' 'x86_64')
+license=('GPL3' 'LGPL3')
+depends=('ncurses' 'wayland' 'cairo' 'pango' 'libxkbcommon' 'libxinerama')
+makedepends=('git' 'cmake')
+provides=('bemenu')
+conflicts=('bemenu')
+source=('git://github.com/Cloudef/bemenu'
+        'bemenu.patch')
+sha256sums=('SKIP'
+            '19dfe7e415bb36f9bb59fb091f35ea64dd36f81b40a3b8440a5888a6ecd2795a')
+
+pkgver() {
+  cd bemenu
+  printf 'r%s+g%s' "$(git rev-list --count HEAD)" "$(git describe --always)"
+}
+
+prepare() {
+  cd bemenu
+  patch -p1 < ../bemenu.patch
+}
+
+build() {
+  cd bemenu
+  cmake -DCMAKE_INSTALL_LIBDIR=/usr/lib
+  make
+}
+
+package() {
+  cd bemenu
+  make DESTDIR="$pkgdir" install
+}

@@ -1,0 +1,55 @@
+# Contributor: Earnestly
+
+pkgname=fontforge-git
+pkgver=20161005
+pkgrel=1
+pkgdesc='Full-featured outline and bitmap font editor'
+url="http://www.fontforge.org/"
+arch=('i686' 'x86_64')
+license=('GPL3' 'BSD')
+depends=('libtool' 'libxkbui' 'libxi' 'pango' 'giflib' 'libtiff' 'libpng'
+         'python' 'libspiro' 'desktop-file-utils' 'gtk-update-icon-cache'
+         'hicolor-icon-theme' 'libunicodenames' 'shared-mime-info')
+makedepends=('git')
+provides=('fontforge')
+conflicts=('fontforge')
+install='fontforge-git.install'
+source=('git://github.com/fontforge/fontforge.git'
+        'git://git.savannah.gnu.org/gnulib.git'
+        'http://download.savannah.gnu.org/releases/freetype/freetype-2.6.3.tar.bz2')
+sha256sums=('SKIP'
+            'SKIP'
+            '371e707aa522acf5b15ce93f11183c725b8ed1ee8546d7b3af549863045863a2')
+
+pkgver() {
+  cd fontforge
+  git describe | sed 's/-/+/g'
+}
+
+build() {
+  cd fontforge
+
+  ./bootstrap --skip-git --gnulib-srcdir ../gnulib
+
+  ./configure \
+    --prefix=/usr \
+    --mandir=/usr/share/man \
+    --with-freetype-source="$srcdir/freetype-2.6.3"
+
+  make
+}
+
+package() {
+  cd fontforge
+
+  make DESTDIR="$pkgdir" install
+
+  install -Dm644 LICENSE "$pkgdir"/usr/share/licenses/fontforge/LICENSE
+  install -Dm644 desktop/fontforge.desktop "$pkgdir"/usr/share/applications/fontforge.desktop
+
+  # Remove unneeded osx binaries
+  rm -rf "$pkgdir"/usr/share/fontforge/osx
+
+  # Remove docs if required.  This is roughly 10MiB
+  #rm -rf "$pkgdir"/usr/share/doc/fontforge
+}

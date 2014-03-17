@@ -1,0 +1,68 @@
+diff --git a/config.def.h b/config.def.h
+index 7054c06..ec2b0e7 100644
+--- a/config.def.h
++++ b/config.def.h
+@@ -42,7 +42,7 @@ static const Layout layouts[] = {
+ };
+ 
+ /* key definitions */
+-#define MODKEY Mod1Mask
++#define MODKEY Mod4Mask
+ #define TAGKEYS(KEY,TAG) \
+ 	{ MODKEY,                       KEY,      view,           {.ui = 1 << TAG} }, \
+ 	{ MODKEY|ControlMask,           KEY,      toggleview,     {.ui = 1 << TAG} }, \
+@@ -54,13 +54,41 @@ static const Layout layouts[] = {
+ 
+ /* commands */
+ static char dmenumon[2] = "0"; /* component of dmenucmd, manipulated in spawn() */
+-static const char *dmenucmd[] = { "dmenu_run", "-m", dmenumon, "-fn", dmenufont, "-nb", normbgcolor, "-nf", normfgcolor, "-sb", selbgcolor, "-sf", selfgcolor, NULL };
+-static const char *termcmd[]  = { "st", NULL };
++static const char *dmenucmd[] = { "dmenu_run", "-m", dmenumon, NULL };
++static const char *termcmd[]  = { "termite", NULL };
++static const char *notepadcmd[] = { "termite", "--name", "scratch", NULL };
++static const char *volmt[] = { "amixer", "-q", "set", "Master", "toggle", NULL };
++static const char *voldn[] = { "amixer", "-q", "set", "Master", "1dB-", NULL };
++static const char *volup[] = { "amixer", "-q", "set", "Master", "1dB+", NULL };
++static const char *brtdn[] = { "bset", "-d", "2", NULL };
++static const char *brtup[] = { "bset", "-i", "2", NULL };
++static const char *mpctogg[] = { "mpc", "-q", "toggle", NULL };
++static const char *mpcprev[] = { "mpc", "-q", "prev", NULL };
++static const char *mpcnext[] = { "mpc", "-q", "next", NULL };
++static const char *lockcmd[] = { "i3lock", "-d", "-c", "000000", "-I", "0", NULL };
++static const char *ffxcmd[] = { "firefox", NULL };
++static const char *xrandrcmd[] = { "vex", NULL };
++static const char *scrotcmd[] = { "printscreen", NULL };
+ 
+ static Key keys[] = {
+ 	/* modifier                     key        function        argument */
+-	{ MODKEY,                       XK_p,      spawn,          {.v = dmenucmd } },
+-	{ MODKEY|ShiftMask,             XK_Return, spawn,          {.v = termcmd } },
++	{ MODKEY,                       XK_o,      spawn,          {.v = dmenucmd } },
++	{ MODKEY,                       XK_Return, spawn,          {.v = termcmd } },
++	{ MODKEY|ShiftMask,             XK_Return, spawn,          {.v = notepadcmd } },
++	{ MODKEY|ControlMask,           XK_l,      spawn,          {.v = lockcmd } },
++	{ MODKEY,                       XK_w,      spawn,          {.v = ffxcmd } },
++	{ MODKEY,                       XK_a,      spawn,          {.v = voldn } },
++	{ MODKEY,                       XK_s,      spawn,          {.v = volup } },
++	{ 0,                      0x1008ff12,      spawn,          {.v = volmt } },
++	{ 0,                      0x1008ff11,      spawn,          {.v = voldn } },
++	{ 0,                      0x1008ff13,      spawn,          {.v = volup } },
++	{ 0,                      0x1008ff03,      spawn,          {.v = brtdn } },
++	{ 0,                      0x1008ff02,      spawn,          {.v = brtup } },
++	{ MODKEY,                 XK_backslash,    spawn,          {.v = mpctogg } },
++	{ MODKEY,                 XK_bracketleft,  spawn,          {.v = mpcprev } },
++	{ MODKEY,                 XK_bracketright, spawn,          {.v = mpcnext } },
++	{ 0,                      0x1008ff59,      spawn,          {.v = xrandrcmd } },
++	{ 0,                      0xff61,          spawn,          {.v = scrotcmd } },
+ 	{ MODKEY,                       XK_b,      togglebar,      {0} },
+ 	{ MODKEY,                       XK_j,      focusstack,     {.i = +1 } },
+ 	{ MODKEY,                       XK_k,      focusstack,     {.i = -1 } },
+@@ -68,7 +96,7 @@ static Key keys[] = {
+ 	{ MODKEY,                       XK_d,      incnmaster,     {.i = -1 } },
+ 	{ MODKEY,                       XK_h,      setmfact,       {.f = -0.05} },
+ 	{ MODKEY,                       XK_l,      setmfact,       {.f = +0.05} },
+-	{ MODKEY,                       XK_Return, zoom,           {0} },
++	{ MODKEY,                       XK_z,      zoom,           {0} },
+ 	{ MODKEY,                       XK_Tab,    view,           {0} },
+ 	{ MODKEY|ShiftMask,             XK_c,      killclient,     {0} },
+ 	{ MODKEY,                       XK_t,      setlayout,      {.v = &layouts[0]} },

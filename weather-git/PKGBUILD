@@ -1,0 +1,39 @@
+# Contributor: Kyle Keen <keenerd at gmail>
+# Contributor: evr <evanroman at gmail>
+# Contributor: Abhishek Dasgupta <abhidg@gmail.com>
+
+pkgname=weather-git
+pkgver=2.3+1+g2a84a53
+pkgrel=1
+pkgdesc="CLI tool which shows weather forecasts from METAR data"
+arch=('any')
+url="http://fungi.yuggoth.org/weather/"
+depends=('python')
+license=("custom:BSD2")
+backup=('etc/weatherrc')
+provides=('weather')
+conflicts=('weather')
+source=('git+http://www.yuggoth.org/git/weather'
+        'setup.py'
+        'xdg_base_dirs.diff'
+        'weather-gen')
+sha256sums=('SKIP'
+            'a97e6354f53db10a9110998c297fe4b7a791a57ac68baf4e6f9be088781bb3df'
+            '8017e340516663c14e24ec17b4e49a96cf3cf4572b1cb9871b0faaba35544029'
+            '6e1924607d4fe06c7bdc044265a7595899546d9e8f9308868a43c0a2a4ea70ab')
+
+pkgver() {
+  cd weather
+  git describe | sed 's/-/+/g'
+}
+
+prepare() {
+  cd weather
+  patch -p1 < ../xdg_base_dirs.diff
+}
+
+package() {
+  cd weather
+  python ../setup.py install --root="$pkgdir" --optimize=1
+  install -Dm755 ../weather-gen "$pkgdir"/usr/bin/weather-gen
+}

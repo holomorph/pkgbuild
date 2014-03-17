@@ -1,0 +1,40 @@
+# Maintainer: Daniel Micay <danielmicay@gmail.com>
+
+pkgname=termite-git
+pkgver=12+15+g5610a38
+pkgrel=1
+pkgdesc="A simple VTE-based terminal"
+arch=('i686' 'x86_64')
+url="https://github.com/thestinger/termite/"
+license=('LGPL')
+depends=('vte3')
+makedepends=('git')
+provides=('termite')
+conflicts=('termite')
+backup=('etc/xdg/termite/config')
+source=('git+https://github.com/thestinger/termite'
+        'git+https://github.com/thestinger/util')
+sha256sums=('SKIP' 'SKIP')
+
+pkgver() {
+  cd termite
+  git describe | sed 's/^v//;s/-/+/g'
+}
+
+prepare() {
+  cd termite
+  git submodule init
+  git config submodule.util.url "$srcdir/util"
+  git submodule update
+}
+
+build() {
+  cd termite
+  make
+}
+
+package() {
+  cd termite
+  make PREFIX=/usr DESTDIR="$pkgdir" install
+  install -Dm644 config "$pkgdir/etc/xdg/termite/config"
+}

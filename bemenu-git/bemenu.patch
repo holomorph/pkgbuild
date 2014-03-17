@@ -1,0 +1,39 @@
+diff --git a/lib/menu.c b/lib/menu.c
+index 2eea897..9a5ed6e 100644
+--- a/lib/menu.c
++++ b/lib/menu.c
+@@ -9,24 +9,24 @@
+ /**
+  * Default font.
+  */
+-static const char *default_font = "Terminus 9";
++static const char *default_font = "Inconsolatazi4 12";
+ 
+ /**
+  * Default hexadecimal colors.
+  */
+ static const char *default_colors[BM_COLOR_LAST] = {
+-    "#121212", // BM_COLOR_TITLE_BG
+-    "#D81860", // BM_COLOR_TITLE_FG
++    "#373b41", // BM_COLOR_TITLE_BG
++    "#ffffff", // BM_COLOR_TITLE_FG
+     "#121212", // BM_COLOR_FILTER_BG
+-    "#CACACA", // BM_COLOR_FILTER_FG
++    "#91cfc6", // BM_COLOR_FILTER_FG
+     "#121212", // BM_COLOR_ITEM_BG
+-    "#CACACA", // BM_COLOR_ITEM_FG
+-    "#121212", // BM_COLOR_HIGHLIGHTED_BG
+-    "#D81860", // BM_COLOR_HIGHLIGHTED_FG
+-    "#121212", // BM_COLOR_SELECTED_BG
+-    "#D81860", // BM_COLOR_SELECTED_FG
++    "#facb70", // BM_COLOR_ITEM_FG
++    "#373b41", // BM_COLOR_HIGHLIGHTED_BG
++    "#ffffff", // BM_COLOR_HIGHLIGHTED_FG
++    "#d5d9d6", // BM_COLOR_SELECTED_BG
++    "#121212", // BM_COLOR_SELECTED_FG
+     "#121212", // BM_COLOR_SCROLLBAR_BG
+-    "#D81860", // BM_COLOR_SCROLLBAR_FG
++    "#91cfc6", // BM_COLOR_SCROLLBAR_FG
+ };
+ 
+ /**

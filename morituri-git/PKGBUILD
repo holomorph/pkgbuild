@@ -1,0 +1,55 @@
+# Contributor: Frederik "Freso" S. Olesen <archlinux@freso.dk>
+# Contributor: Caleb Reach <jtxx000@gmail.com>
+# Based on aur/morituri PKGBUILD by Mantas Mikulėnas <grawity@gmail.com>
+
+pkgname=morituri-git
+pkgver=0.2.3+17+g135b2f7
+pkgrel=1
+pkgdesc='CD ripper aiming for accuracy over speed, modelled after Exact Audio Copy'
+arch=('any')
+url="https://github.com/thomasvs/morituri"
+license=('GPL3')
+depends=('cdparanoia' 'cdrdao' 'gstreamer0.10' 'gstreamer0.10-python'
+         'python2-musicbrainz2')
+optdepends=('python2-pycdio: Drive recognition.'
+            'gstreamer0.10-base-plugins: Offset detection.'
+            'cddb-py: FreeDB support.')
+makedepends=('git' 'python2-distribute')
+conflicts=('morituri')
+provides=('morituri')
+source=('git+https://github.com/thomasvs/morituri.git'
+        'git+https://github.com/alastair/python-musicbrainzngs.git'
+        'git+https://github.com/thomasvs/python-command.git'
+        'git+https://github.com/thomasvs/python-deps.git'
+        'git+https://github.com/Flumotion/flog.git')
+sha256sums=('SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP')
+
+pkgver() {
+  cd morituri
+  git describe --always | sed 's/v//;s/-/+/g'
+}
+
+prepare() {
+  cd morituri
+  git submodule init
+  git config submodule.musicbrainz.url "$srcdir/python-musicbrainzngs.git"
+  git config submodule.command.url "$srcdir/python-command.git"
+  git config submodule.deps.url "$srcdir/python-deps.git"
+  git config submodule.flog.url "$srcdir/flog.git"
+  git submodule update
+}
+
+build() {
+  cd morituri
+
+  PYTHON=/usr/bin/python2 ./autogen.sh \
+    --prefix=/usr \
+    --sysconfdir=/etc
+
+  make
+}
+
+package() {
+  cd morituri
+  make DESTDIR="$pkgdir" install
+}

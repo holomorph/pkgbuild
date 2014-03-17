@@ -1,0 +1,47 @@
+# Maintainer: Your Name <youremail@domain.com>
+
+pkgname=dmenu-git
+pkgver=4.6+4+gb3d9451
+pkgrel=1
+pkgdesc='A generic menu for X'
+arch=('i686' 'x86_64')
+url="http://tools.suckless.org/dmenu/"
+license=('MIT')
+depends=('sh' 'libxinerama' 'libxft' 'pango')
+makedepends=('git')
+provides=('dmenu')
+conflicts=('dmenu')
+source=('git://git.suckless.org/dmenu#commit=b3d9451'
+        'config.h'
+        'dmenu-git-emacs.diff'
+        'dmenu-git-pango.diff'
+        'dmenu-git-wrap.diff')
+sha256sums=('SKIP'
+            'ccc615fc09201c197e2fc6fee9c42cf250e07d38ee53bf317d3c14fc87956ef1'
+            '34c56d572aa55be67991060233126d26083a02b4f959456b954368bff0340c25'
+            '5ba17aecb572b99d4e95a068762a0db37d2cc4804e8c698cc03489398f060dcf'
+            '2464d0ccf4229d192d3eb484ad47b0b5364c9f82102d871901ae9c3f1dffc52e')
+
+pkgver() {
+  cd dmenu
+  git describe --tags | sed 's/^v//;s/-/+/g'
+}
+
+prepare() {
+  cd dmenu
+  ln -sf ../config.h .
+  patch -p1 < ../dmenu-git-emacs.diff
+  # patch -p1 < ../dmenu-git-pango.diff
+  # patch -p1 < ../dmenu-git-wrap.diff
+}
+
+build() {
+  cd dmenu
+  make
+}
+
+package() {
+  cd dmenu
+  make DESTDIR="$pkgdir" PREFIX=/usr install
+  install -Dm644 LICENSE "$pkgdir"/usr/share/licenses/dmenu/LICENSE
+}

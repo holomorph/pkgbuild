@@ -1,0 +1,32 @@
+diff --git a/config.def.h b/config.def.h
+index 7054c06..ebd01c2 100644
+--- a/config.def.h
++++ b/config.def.h
+@@ -25,8 +25,25 @@ static const Rule rules[] = {
+ 	 *	WM_NAME(STRING) = title
+ 	 */
+ 	/* class      instance    title       tags mask     isfloating   monitor */
+-	{ "Gimp",     NULL,       NULL,       0,            1,           -1 },
+-	{ "Firefox",  NULL,       NULL,       1 << 8,       0,           -1 },
++	{ "Darktable",NULL,       NULL,       1 << 6,       0,           -1 },
++	{ "Display",  NULL,       NULL,       0,            1,           -1 },
++	{ "feh",      NULL,       NULL,       0,            1,           -1 },
++	{ "ffplay",   NULL,       NULL,       0,            1,           -1 },
++	{ "Fig",      NULL,       NULL,       1 << 7,       0,           -1 },
++	/*{ "fontforge",NULL,       NULL,       0,            1,           -1 },*/
++	/*{ "Gbdfed",   NULL,       NULL,       0,            1,           -1 },*/
++	{ "Gimp",     NULL,       NULL,       1 << 7,       0,           -1 },
++	{ "Inkscape", NULL,       NULL,       1 << 7,       0,           -1 },
++	{ "Firefox",  NULL,       NULL,       1,            1,           -1 },
++	{ "Firefox",  "Navigator",NULL,       1,            0,           -1 },
++	/*{ "llpp",     NULL,       NULL,       0,            1,           -1 },*/
++	/*{ "mpv",      NULL,       NULL,       0,            1,           -1 },*/
++	/*{ "MuPDF",    NULL,       NULL,       0,            1,           -1 },*/
++	{ "Sxiv",     NULL,       NULL,       1 << 6,       0,           -1 },
++	{ "Termite",  "scratch",  NULL,       0,            1,           -1 },
++	{ "Xfd",      NULL,       NULL,       0,            1,           -1 },
++	{ "XFontSel", NULL,       NULL,       0,            1,           -1 },
++	{ "Zathura",  NULL,       NULL,       0,            1,           -1 },
+ };
+ 
+ /* layout(s) */
